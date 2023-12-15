@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  run-library-api-locally:
+    container_name: library-api-local-starter
+    restart: "no"
+    image: tianon/true
+    depends_on:
+      - library-api
+
+  library-api:
+    container_name: library-api
+    image: library-api:latest
+    restart: unless-stopped
+    build:
+      context: .
+    command: poetry run flask run
+    volumes:
+      - .:/app-workspace
+    ports:
+      - "7501:5000"
+    env_file:
+      - .env
+    depends_on:
+      - library-api-postgres
+
+
+  library-api-postgres:
+    container_name: library-api-postgres
+    image: postgres:13.3-alpine
+    restart: always
+    volumes:
+      - library-api-postgres-data:/var/lib/postgresql/data/
+    healthcheck:
+      test: "pg_isready -U $$POSTGRES_USER"
+      timeout: 10s
+      interval: 10s
+      retries: 3
+    env_file:
+      - .env
+    ports:
+      - "7510:5432"
+
+volumes:
+  library-api-postgres-data:
