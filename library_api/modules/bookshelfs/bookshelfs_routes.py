@@ -1,7 +1,6 @@
 from http import HTTPStatus
 
 from flask import Blueprint, jsonify, request
-from flask_jwt_extended import get_jwt_identity, jwt_required
 from library_api.domain.bookshelf import Bookshelf
 
 
@@ -15,9 +14,8 @@ bookshelfs_blueprint = Blueprint('bookshelfs', __name__, url_prefix='/bookshelfs
 
 
 @bookshelfs_blueprint.route('/', methods=['POST'])
-@jwt_required()
 def add_bookshelf():
-    current_user_id = get_jwt_identity()
+    current_user_id = 1
     user = GetUser().by_id(current_user_id)
     if not user:
         return jsonify({'msg': 'Forbidden'}), HTTPStatus.FORBIDDEN
@@ -40,9 +38,8 @@ def add_bookshelf():
         return jsonify(str(err)), HTTPStatus.BAD_REQUEST
 
 @bookshelfs_blueprint.route('/edit', methods=['POST'])
-@jwt_required()
 def edit_bookshelf_information():
-    current_user_id = get_jwt_identity()
+    current_user_id = 1
     user = GetUser().by_id(current_user_id)
     if not user:
         return jsonify({'msg': 'Forbidden'}), HTTPStatus.FORBIDDEN
@@ -64,9 +61,8 @@ def edit_bookshelf_information():
 
 
 @bookshelfs_blueprint.route('/<int:bookshelf_id>', methods=['DELETE'])
-@jwt_required()
 def delete_bookshelf(bookshelf_id):
-    current_user_id = get_jwt_identity()
+    current_user_id = 1
     user = GetUser().by_id(current_user_id)
     if not user:
         return jsonify({'msg': 'Forbidden'}), HTTPStatus.FORBIDDEN

@@ -1,7 +1,6 @@
 from http import HTTPStatus
 
 from flask import Blueprint, jsonify, request
-from flask_jwt_extended import get_jwt_identity, jwt_required
 from library_api.domain.citation import Citation
 
 
@@ -15,9 +14,8 @@ citations_blueprint = Blueprint('citations', __name__, url_prefix='/citations')
 
 
 @citations_blueprint.route('/', methods=['POST'])
-@jwt_required()
 def add_citation():
-    current_user_id = get_jwt_identity()
+    current_user_id = 1
     user = GetUser().by_id(current_user_id)
     if not user:
         return jsonify({'msg': 'Forbidden'}), HTTPStatus.FORBIDDEN
@@ -40,10 +38,10 @@ def add_citation():
     except Exception as err:
         return jsonify(str(err)), HTTPStatus.BAD_REQUEST
 
+
 @citations_blueprint.route('/edit', methods=['POST'])
-@jwt_required()
 def edit_citation_information():
-    current_user_id = get_jwt_identity()
+    current_user_id = 1
     user = GetUser().by_id(current_user_id)
     if not user:
         return jsonify({'msg': 'Forbidden'}), HTTPStatus.FORBIDDEN
@@ -65,9 +63,8 @@ def edit_citation_information():
 
 
 @citations_blueprint.route('/<int:citation_id>', methods=['DELETE'])
-@jwt_required()
 def delete_bookshelf(citation_id):
-    current_user_id = get_jwt_identity()
+    current_user_id = 1
     user = GetUser().by_id(current_user_id)
     if not user:
         return jsonify({'msg': 'Forbidden'}), HTTPStatus.FORBIDDEN

@@ -1,7 +1,6 @@
 from http import HTTPStatus
 
 from flask import Blueprint, jsonify, request
-from flask_jwt_extended import get_jwt_identity, jwt_required
 from library_api.domain.book import Book
 
 
@@ -16,9 +15,8 @@ books_blueprint = Blueprint('books', __name__, url_prefix='/books')
 
 
 @books_blueprint.route('/', methods=['POST'])
-@jwt_required()
 def add_book():
-    current_user_id = get_jwt_identity()
+    current_user_id = 1
     user = GetUser().by_id(current_user_id)
     if not user:
         return jsonify({'msg': 'Forbidden'}), HTTPStatus.FORBIDDEN
@@ -45,9 +43,8 @@ def add_book():
 
 
 @books_blueprint.route('/edit', methods=['POST'])
-@jwt_required()
 def edit_book_information():
-    current_user_id = get_jwt_identity()
+    current_user_id = 1
     user = GetUser().by_id(current_user_id)
     if not user:
         return jsonify({'msg': 'Forbidden'}), HTTPStatus.FORBIDDEN
@@ -69,9 +66,8 @@ def edit_book_information():
 
 
 @books_blueprint.route('/<int:book_id>', methods=['DELETE'])
-@jwt_required()
 def delete_book(book_id):
-    current_user_id = get_jwt_identity()
+    current_user_id = 1
     user = GetUser().by_id(current_user_id)
     if not user:
         return jsonify({'msg': 'Forbidden'}), HTTPStatus.FORBIDDEN
@@ -79,6 +75,31 @@ def delete_book(book_id):
     try:
         DeleteBookCommand().by_id(book_id)
         return jsonify(book_id), HTTPStatus.OK
+
+    except Exception as err:
+        return jsonify(str(err)), HTTPStatus.BAD_REQUEST
+
+@books_blueprint.route('/all', methods=['GET'])
+def get_all_book():
+    current_user_id = 1
+    user = GetUser().by_id(current_user_id)
+    if not user:
+        return jsonify({'msg': 'Forbidden'}), HTTPStatus.FORBIDDEN
+
+    try:
+        books = GetBookQuery().by_user_id(current_user_id)
+
+        books_response = []
+        for book in books:
+            books_response.append(
+                {
+                    "bookId": book.id,
+                    "bookName": book.name,
+                    "bookAuthor": book.author,
+                }
+            )
+
+        return jsonify(books_response), HTTPStatus.OK
 
     except Exception as err:
         return jsonify(str(err)), HTTPStatus.BAD_REQUEST

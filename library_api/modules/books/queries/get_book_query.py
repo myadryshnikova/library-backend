@@ -17,5 +17,17 @@ class GetBookQuery:
         finally:
             current_session.close()
 
+    @staticmethod
+    def by_user_id(user_id: int):
+        current_session = session()
+        try:
+            return current_session \
+                .query(Book) \
+                .filter(Book.user_id == user_id) \
+                .all()
+
+        finally:
+            current_session.close()
+
 
 
