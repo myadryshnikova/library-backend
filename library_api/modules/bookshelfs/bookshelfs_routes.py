@@ -8,6 +8,8 @@ from library_api.modules.auth.queries.user_query import GetUser
 from library_api.modules.bookshelfs.commands.delete_bookshelf_command import DeleteBookshelfCommand
 from library_api.modules.bookshelfs.commands.edit_bookshelf_info import EditBookshelfInfoCommand
 from library_api.modules.bookshelfs.commands.new_bookshelf_command import NewBookshelfCommand
+from library_api.modules.bookshelfs.queries.get_bookshelf_query import GetBookshelfQuery
+from library_api.modules.books.queries.get_book_query import GetBookQuery
 
 
 bookshelfs_blueprint = Blueprint('bookshelfs', __name__, url_prefix='/bookshelfs')
@@ -70,6 +72,32 @@ def delete_bookshelf(bookshelf_id):
     try:
         DeleteBookshelfCommand().by_id(bookshelf_id)
         return jsonify(bookshelf_id), HTTPStatus.OK
+
+    except Exception as err:
+        return jsonify(str(err)), HTTPStatus.BAD_REQUEST
+
+
+@bookshelfs_blueprint.route('/', methods=['GET'])
+def get_all_bookshelfs():
+    current_user_id = 1
+    user = GetUser().by_id(current_user_id)
+    if not user:
+        return jsonify({'msg': 'Forbidden'}), HTTPStatus.FORBIDDEN
+
+    try:
+        bookshelfs = GetBookshelfQuery().by_user_id(current_user_id)
+
+        bookshelfs_response = []
+        for bookshelf in bookshelfs:
+            bookshelfs_response.append(
+                {
+                    "bookshelfId": bookshelf.id,
+                    "bookshelfName": bookshelf.name,
+                    "bookCount": GetBookQuery().count_by_bookshef_id(bookshelf.id),
+                }
+            )
+
+        return jsonify(bookshelfs_response), HTTPStatus.OK
 
     except Exception as err:
         return jsonify(str(err)), HTTPStatus.BAD_REQUEST

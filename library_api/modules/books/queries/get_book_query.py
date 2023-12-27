@@ -29,5 +29,16 @@ class GetBookQuery:
         finally:
             current_session.close()
 
+    @staticmethod
+    def count_by_bookshef_id(bookshef_id:int):
+        current_session = session()
+        try:
+            return current_session \
+                .query(Book) \
+                .filter(Book.bookshelf_id == bookshef_id) \
+                .count()
+
+        finally:
+            current_session.close()
 
 
