@@ -6,7 +6,7 @@ class GetBookshelfQuery:
         pass
 
     @staticmethod
-    def by_id(bookshelf_id: int):
+    def by_id(bookshelf_id: int) -> Bookshelf:
         current_session = session()
         try:
             return current_session \

@@ -101,3 +101,32 @@ def get_all_bookshelfs():
 
     except Exception as err:
         return jsonify(str(err)), HTTPStatus.BAD_REQUEST
+
+
+@bookshelfs_blueprint.route('/<int:bookshelf_id>', methods=['GET'])
+def get_books_on_bookshelf(bookshelf_id):
+    current_user_id = 1
+    user = GetUser().by_id(current_user_id)
+    if not user:
+        return jsonify({'msg': 'Forbidden'}), HTTPStatus.FORBIDDEN
+
+    try:
+        books = GetBookQuery().by_bookshelf_id(bookshelf_id)
+
+        books_response = {
+            "bookshelfName": GetBookshelfQuery().by_id(bookshelf_id).name,
+            "books": [],
+        }
+        for book in books:
+            books_response['books'].append(
+                {
+                    "bookId": book.id,
+                    "bookName": book.name,
+                    "bookAuthor": book.author,
+                }
+            )
+
+        return jsonify(books_response), HTTPStatus.OK
+
+    except Exception as err:
+        return jsonify(str(err)), HTTPStatus.BAD_REQUEST

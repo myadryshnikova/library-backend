@@ -1,3 +1,4 @@
+from typing import List
 from library_api.domain.data_access_layer.session import session
 from library_api.domain.book import Book
 
@@ -40,5 +41,17 @@ class GetBookQuery:
 
         finally:
             current_session.close()
+
+    @staticmethod
+    def by_bookshelf_id(bookshelf_id: int) -> List[Book]:
+        current_session = session()
+        try:
+            return current_session \
+                .query(Book) \
+                .filter(Book.bookshelf_id == bookshelf_id) \
+                .all()
+
+        finally:
+            current_session.close()   
 
 
