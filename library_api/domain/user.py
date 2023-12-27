@@ -9,7 +9,8 @@ class User(db.Model):
     hashed_password = db.Column(db.String(64), nullable=False)
     password_salt = db.Column(db.String(64), unique=True,  nullable=False)
 
-    bookshelfs_relationship = db.relationship('Bookshelf', back_populates='users')
+    bookshelfs = db.relationship('Bookshelf', back_populates='users')
+    books = db.relationship('Book', back_populates='users')
 
     def __repr__(self):
         return f'<User {self.login!r}>'
