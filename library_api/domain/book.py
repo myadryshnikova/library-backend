@@ -1,4 +1,5 @@
 from library_api.domain.data_access_layer.db import db
+from sqlalchemy.dialects.postgresql import JSON
 
 
 class Book(db.Model):
@@ -13,6 +14,7 @@ class Book(db.Model):
     bookshelf_id = db.Column(db.BigInteger, db.ForeignKey('bookshelfs.id'), nullable=True)
 
     deleted_at = db.Column(db.DateTime, nullable=True)
+    additional_fields = db.Column(JSON, nullable=True)
 
     users = db.relationship('User', back_populates='books')
     bookshelfs = db.relationship('Bookshelf', back_populates='books')

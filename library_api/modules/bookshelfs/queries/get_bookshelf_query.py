@@ -23,6 +23,7 @@ class GetBookshelfQuery:
         try:
             return current_session \
                 .query(Bookshelf) \
+                .filter(Bookshelf.deleted_at.is_(None)) \
                 .filter(Bookshelf.user_id == user_id) \
                 .all()
 

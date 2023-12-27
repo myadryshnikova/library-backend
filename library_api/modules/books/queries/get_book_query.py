@@ -13,6 +13,7 @@ class GetBookQuery:
             return current_session \
                 .query(Book) \
                 .filter(Book.id == book_id) \
+                .filter(Book.deleted_at.is_(None)) \
                 .one_or_none()
 
         finally:
@@ -25,6 +26,7 @@ class GetBookQuery:
             return current_session \
                 .query(Book) \
                 .filter(Book.user_id == user_id) \
+                .filter(Book.deleted_at.is_(None)) \
                 .all()
 
         finally:
@@ -36,6 +38,7 @@ class GetBookQuery:
         try:
             return current_session \
                 .query(Book) \
+                .filter(Book.deleted_at.is_(None)) \
                 .filter(Book.bookshelf_id == bookshef_id) \
                 .count()
 
@@ -48,6 +51,7 @@ class GetBookQuery:
         try:
             return current_session \
                 .query(Book) \
+                .filter(Book.deleted_at.is_(None)) \
                 .filter(Book.bookshelf_id == bookshelf_id) \
                 .all()
 
